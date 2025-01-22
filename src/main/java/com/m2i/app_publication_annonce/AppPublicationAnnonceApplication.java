@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AppPublicationAnnonceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AppPublicationAnnonceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AppPublicationAnnonceApplication.class, args);
+    }
 
 }
