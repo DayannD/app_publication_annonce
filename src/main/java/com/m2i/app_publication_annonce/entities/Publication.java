@@ -29,5 +29,5 @@ public class Publication {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    private User user;
+    private UserEntity userEntity;
 }
