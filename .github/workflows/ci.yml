@@ -23,8 +23,8 @@ jobs:
                   distribution: 'temurin'
                   cache: maven
 
-            - name: Run docker-compose
-              run: docker-compose up -d
+            - name: Run docker compose
+              run: docker compose up -d
 
             - name: Build and test
               run: |
