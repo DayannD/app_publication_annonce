@@ -7,7 +7,6 @@ import com.m2i.app_publication_annonce.service.UserService;
 import com.m2i.app_publication_annonce.utils.UrlUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
