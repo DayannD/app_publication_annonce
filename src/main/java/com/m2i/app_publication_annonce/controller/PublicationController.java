@@ -1,6 +1,7 @@
 package com.m2i.app_publication_annonce.controller;
 
 import com.m2i.app_publication_annonce.controller.dto.CreatePublicationDto;
+import com.m2i.app_publication_annonce.controller.dto.PublicationDto;
 import com.m2i.app_publication_annonce.entities.Publication;
 import com.m2i.app_publication_annonce.mapper.PublicationMapper;
 import com.m2i.app_publication_annonce.service.PublicationService;
@@ -28,13 +29,13 @@ public class PublicationController {
 
     @GetMapping(UrlUtils.Publication.BASE_URL)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public List<Publication> getPublications() {
-        return this.publicationService.getPublications();
+    public List<PublicationDto> getPublications() {
+        return this.publicationMapper.toDto(this.publicationService.getPublications());
     }
 
     @GetMapping(UrlUtils.Publication.ALL)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Publication> getAllPublications() {
-        return this.publicationService.getAllPublications();
+    public List<PublicationDto> getAllPublications() {
+        return this.publicationMapper.toDto(this.publicationService.getAllPublications());
     }
 }
