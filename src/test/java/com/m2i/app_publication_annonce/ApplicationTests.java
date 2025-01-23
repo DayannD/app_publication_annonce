@@ -70,17 +70,12 @@ public class ApplicationTests {
      */
     @Test
     void testUserRegistrationSuccess() {
-        CreateUserDto userDto = new CreateUserDto();
-        userDto.setEmail("test@example.com");
-        userDto.setPassword("strongpassword");
-        userDto.setUsername("testuser");
-        userDto.setLastName("Test");
-
+        CreateUserDto userDto = this.createUserDto();
         UserEntity userEntity = this.getUserEntity();
 
-        when(passwordEncoder.encode(userDto.getPassword())).thenReturn("encodedpassword");
+        when(this.passwordEncoder.encode(userDto.getPassword())).thenReturn("encodedpassword");
 
-        ResponseEntity<String> response = testedUserService.registerUser(userEntity);
+        ResponseEntity<String> response = this.testedUserService.registerUser(userEntity);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("User registered successfully", response.getBody());
@@ -93,11 +88,11 @@ public class ApplicationTests {
     void testUserLoginSuccess() {
         LoginUserDto loginUserDto = new LoginUserDto("test@example.com", "encodedpassword");
 
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(this.getUserEntity()));
-        when(passwordEncoder.matches(any(), any())).thenReturn(true);
-        when(jwtUtil.generateToken(anyLong(), anyString())).thenReturn("valid.jwt.token");
+        when(this.userRepository.findByEmail(any())).thenReturn(Optional.of(this.getUserEntity()));
+        when(this.passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(this.jwtUtil.generateToken(anyLong(), anyString())).thenReturn("valid.jwt.token");
 
-        ResponseEntity<String> response = testedUserService.loginUser(loginUserDto);
+        ResponseEntity<String> response = this.testedUserService.loginUser(loginUserDto);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("valid.jwt.token", response.getBody());
@@ -108,24 +103,18 @@ public class ApplicationTests {
      */
     @Test
     void testCreatePublicationSuccess() {
-        SecurityContext securityContext = mock(SecurityContext.class);
-        Authentication authentication = mock(Authentication.class);
+        mockSecurityContext("test@example.com");
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn("test@example.com");
-        SecurityContextHolder.setContext(securityContext);
-
-        CreatePublicationDto publicationDto = new CreatePublicationDto("Title", "Description", 100.0, "http://image.url");
-
+        CreatePublicationDto publicationDto = this.createPublicationDto();
         Publication publication = new Publication();
         publication.setTitle(publicationDto.title());
         publication.setDescription(publicationDto.description());
         publication.setPrice(publicationDto.price());
 
-        when(publicationRepository.save(any(Publication.class))).thenReturn(publication);
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(this.getUserEntity()));
+        when(this.publicationRepository.save(any(Publication.class))).thenReturn(publication);
+        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.of(this.getUserEntity()));
 
-        Publication createdPublication = testedPublicationService.createPublication(publication);
+        Publication createdPublication = this.testedPublicationService.createPublication(publication);
 
         assertNotNull(createdPublication);
         assertEquals(publicationDto.title(), createdPublication.getTitle());
@@ -136,21 +125,17 @@ public class ApplicationTests {
      */
     @Test
     void testGetPublications() {
-        SecurityContext securityContext = mock(SecurityContext.class);
-        Authentication authentication = mock(Authentication.class);
+        this.mockSecurityContext("test@example.com");
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn("test@example.com");
-        SecurityContextHolder.setContext(securityContext);
-
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(this.getUserEntity()));
 
         Publication publication = new Publication();
         publication.setTitle("Title");
         publication.setUserEntity(this.getUserEntity());
-        when(publicationRepository.findByUserEntityId(1L)).thenReturn(List.of(publication));
 
-        List<Publication> publications = testedPublicationService.getPublications();
+        when(this.userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(this.getUserEntity()));
+        when(this.publicationRepository.findByUserEntityId(1L)).thenReturn(List.of(publication));
+
+        List<Publication> publications = this.testedPublicationService.getPublications();
 
         assertNotNull(publications);
         assertEquals(1, publications.size());
@@ -167,9 +152,9 @@ public class ApplicationTests {
     void testInvalidLogin() {
         LoginUserDto loginUserDto = new LoginUserDto("wrong@example.com", "wrongpassword");
 
-        when(userService.loginUser(loginUserDto)).thenReturn(ResponseEntity.badRequest().body("Invalid email or password"));
+        when(this.userService.loginUser(loginUserDto)).thenReturn(ResponseEntity.badRequest().body("Invalid email or password"));
 
-        ResponseEntity<String> response = testedUserService.loginUser(loginUserDto);
+        ResponseEntity<String> response = this.testedUserService.loginUser(loginUserDto);
 
         assertEquals(400, response.getStatusCodeValue());
         assertEquals("Invalid email or password", response.getBody());
@@ -184,5 +169,28 @@ public class ApplicationTests {
         user.setRole(Role.USER);
 
         return user;
+    }
+
+    private CreateUserDto createUserDto() {
+        CreateUserDto userDto = new CreateUserDto();
+        userDto.setEmail("test@example.com");
+        userDto.setPassword("strongpassword");
+        userDto.setUsername("testuser");
+        userDto.setLastName("Test");
+
+        return userDto;
+    }
+
+    private CreatePublicationDto createPublicationDto() {
+        return new CreatePublicationDto("Title", "Description", 100.0, "http://image.url");
+    }
+
+    private void mockSecurityContext(String email) {
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(email);
+        SecurityContextHolder.setContext(securityContext);
     }
 }
