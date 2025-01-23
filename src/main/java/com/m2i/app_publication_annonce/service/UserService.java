@@ -3,6 +3,7 @@ package com.m2i.app_publication_annonce.service;
 import com.m2i.app_publication_annonce.config.JwtUtil;
 import com.m2i.app_publication_annonce.controller.dto.LoginUserDto;
 import com.m2i.app_publication_annonce.entities.UserEntity;
+import com.m2i.app_publication_annonce.entities.enums.Role;
 import com.m2i.app_publication_annonce.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
     }
@@ -39,7 +41,9 @@ public class UserService {
             return ResponseEntity.badRequest().body("Invalid email or password");
         }
 
-        String token = jwtUtil.generateToken(user.email());
+        System.out.println("USER-TEST" + userEntityOpt);
+
+        String token = jwtUtil.generateToken(userEntityOpt.get().getId(),userEntityOpt.get().getRole().name());
         return ResponseEntity.ok(token);
     }
 }
