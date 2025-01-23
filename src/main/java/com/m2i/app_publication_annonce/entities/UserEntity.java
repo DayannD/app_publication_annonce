@@ -10,7 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 @Table(name = "user_entity")
 @Entity
 public class UserEntity {
@@ -19,7 +25,7 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "username")
-    private String username;
+    public String username;
 
     @Column(name = "password")
     private String password;
@@ -30,16 +36,4 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
 }

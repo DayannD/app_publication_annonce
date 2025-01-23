@@ -8,6 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "username", expression = "java(createUserDto.getUsername() + \" \" + createUserDto.getLastName())")
+    @Mapping(target="username", expression="java(createUserDto.getUsername() + \" \" + createUserDto.getLastName())")
     UserEntity toEntity(CreateUserDto createUserDto);
 }
