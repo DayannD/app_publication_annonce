@@ -11,6 +11,8 @@ import java.util.List;
 public interface PublicationMapper {
     Publication toEntity(CreatePublicationDto createPublicationDto);
 
+    Publication toEntity(PublicationDto publicationDto);
+
     PublicationDto toDto(Publication publication);
 
     List<PublicationDto> toDto(List<Publication> publications);
