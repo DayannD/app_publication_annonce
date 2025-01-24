@@ -23,8 +23,9 @@ public class PublicationController {
     private final PublicationMapper publicationMapper;
 
     @PostMapping(UrlUtils.Publication.CREATE)
-    public Publication createPublication(@RequestBody CreatePublicationDto createPublicationDto) {
-        return this.publicationService.createPublication(this.publicationMapper.toEntity(createPublicationDto));
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public PublicationDto createPublication(@RequestBody CreatePublicationDto createPublicationDto) {
+        return this.publicationMapper.toDto(this.publicationService.createPublication(this.publicationMapper.toEntity(createPublicationDto)));
     }
 
     @GetMapping(UrlUtils.Publication.BASE_URL)
